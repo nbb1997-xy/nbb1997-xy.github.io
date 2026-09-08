@@ -338,6 +338,42 @@
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .count-badge{font-size:11px;background:var(--purple-soft);color:var(--purple);border-radius:999px;padding:1px 8px;font-weight:700;margin-left:4px;}
+
+  /* ---------- 临期提醒 ---------- */
+  .rem-card{transition:box-shadow .2s;}
+  .rem-card.rem-over{border:1.5px solid #FFD0D8;box-shadow:0 8px 30px rgba(255,92,124,.14);}
+  .rem-card.rem-soon{border:1.5px solid #FFE3B0;box-shadow:0 8px 30px rgba(255,176,32,.12);}
+  .rem-card.rem-ok{border:1.5px solid #CDEFE2;}
+  .rem-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;}
+  .rem-title{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:700;color:var(--text);}
+  .rem-card.rem-over .rem-title{color:var(--danger);}
+  .rem-card.rem-soon .rem-title{color:var(--amber);}
+  .rem-counts{display:flex;gap:6px;}
+  .rem-c{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;}
+  .rem-c.over{background:#FFE9EE;color:var(--danger);}
+  .rem-c.soon{background:#FFF3DD;color:#C77F12;}
+  .rem-calm{font-size:13px;color:var(--green);background:#EDFBF4;border:1px solid #CDEFE2;border-radius:12px;padding:12px;}
+  .rem-group{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+  .rem-row{display:flex;align-items:center;gap:10px;background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;}
+  .rem-row.over{background:#FFF5F7;border-color:#FFD6DE;}
+  .rem-row.soon{background:#FFFBF2;border-color:#FFE6C2;}
+  .rem-dot{width:8px;height:8px;border-radius:50%;flex:none;}
+  .rem-row.over .rem-dot{background:var(--danger);}
+  .rem-row.soon .rem-dot{background:var(--amber);}
+  .rem-body{flex:1;min-width:0;}
+  .rem-text{font-size:13.5px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .rem-sub{font-size:10px;font-weight:700;color:var(--danger);background:#FFE9EE;padding:1px 6px;border-radius:999px;margin-left:4px;}
+  .rem-label{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .rem-go{flex:none;}
+  .rem-set{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);}
+  .rem-set-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);}
+  .rem-sel{font-size:12px;padding:5px 8px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--text);}
+  .rem-notify{background:var(--purple-soft);border:1px solid var(--purple-line);color:var(--purple);font-weight:600;}
+  .rem-snd{user-select:none;cursor:pointer;}
+  .task-block.flash{animation:remFlash 1.6s ease;}
+  @keyframes remFlash{0%{box-shadow:0 0 0 3px var(--purple);}50%{box-shadow:0 0 0 3px var(--purple-2);}100%{box-shadow:none;}}
+  .ghost-btn{position:relative;}
+  .bell-dot{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;border-radius:999px;background:var(--danger);color:#fff;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 4px;box-shadow:0 0 0 2px #fff;}
 </style>
 </head>
 <body data-page-node-id="SbeJPYkt69CZ2Bc5LTmUTY">
@@ -361,6 +397,10 @@
       <div class="sync-pill" data-page-node-id="Sjko1u5XWp68eyQEXUos69"><span class="sync-dot" data-page-node-id="R1DYTkY1TVI1bAiqJrGKYB"></span><span id="syncText" data-page-node-id="sALLtt8JlYEqNBNKCtiZqq">本地已保存</span></div>
       <button class="ghost-btn" id="cloudBtn" title="云端同步" data-page-node-id="O8EllGHlX8FAX4oJN6YAnb">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" data-page-node-id="qPiSVK2DIZcy6DN5D6GXTN"><path d="M7 18a4 4 0 0 1 0-8 5 5 0 0 1 9.6-1.5A3.5 3.5 0 0 1 17 18H7Z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" data-page-node-id="jYqEA81LwlJzlGaSlQlbUz"/><path d="M12 14v-4m0 0 2 2m-2-2-2 2" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="CfeVyOBdk4uTm0iEWDZ4wy"/></svg>
+      </button>
+      <button class="ghost-btn" id="bellBtn" title="临期提醒" data-page-node-id="rem-bell">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2a7 7 0 0 0-7 7c0 5-2 7-2 7h18s-2-2-2-7a7 7 0 0 0-7-7Zm0 20a3 3 0 0 0 3-3H9a3 3 0 0 0 3 3Z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <span class="bell-dot" style="display:none;"></span>
       </button>
       <button class="ghost-btn" id="exportBtn" title="导出备份" data-page-node-id="DLxffbOdEojs8HvnyheDeB">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" data-page-node-id="mqrZvCL5a6Yv7W7X6D9B3E"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 19h14" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="3MJS3O8DJe1ReJ31gtyUWa"/></svg>
@@ -411,6 +451,7 @@
 
   <!-- ===== 驾驶舱 ===== -->
   <section class="view active" id="view-cockpit" data-page-node-id="PeKjYGxQSxUbPrUMU9AoYI">
+    <div class="card rem-card" id="reminderCard"></div>
     <div class="card" data-page-node-id="ZvZQP6p5XelbCciOvOuQCi">
       <div class="sec-head" data-page-node-id="KwvrrSrcwVqNg8Okowgn3I">
         <div class="ic ic-fire" data-page-node-id="pIgKhHlhSw0uyuG8Emb0Je">
@@ -674,6 +715,7 @@
   */
   var CLOUD={URL:"", KEY:""};
   var ACCT_KEY="wb_ws_acct", PIN_KEY="wb_ws_pin", TS_KEY="wb_ws_ts";
+  var REMIND_CFG_KEY="wb_ws_remind_cfg", REMIND_LOG_KEY="wb_ws_remind_log";
   function acct(){return localStorage.getItem(ACCT_KEY)||"";}
   function pin(){return localStorage.getItem(PIN_KEY)||"";}
   function localTs(){var t=parseInt(localStorage.getItem(TS_KEY)||"0",10);return isNaN(t)?0:t;}
@@ -966,7 +1008,9 @@
     var d=dv?dv.value.trim():"";
     if(!d){toast("请先选择截止日期");return;}
     var desc=(document.getElementById("drawerMustDesc").value||"").trim();
-    state.mustDo.push({id:uid(),text:t,description:desc,due:d,originDue:d,from:"manual",postponeLog:[],subtasks:commitSubs()});
+    var nid=uid();var nsub=commitSubs();
+    state.mustDo.push({id:nid,text:t,description:desc,due:d,originDue:d,from:"manual",postponeLog:[],subtasks:nsub});
+    if(nsub.length)expanded[nid]=true;
     inp.value="";if(dv)dv.value="";save();renderMust();toast("已加入今天必须做");
     closeDrawer();
   }
@@ -1011,7 +1055,9 @@
     var d=document.getElementById("drawerShortDue").value;
     if(!d){toast("请先选择截止日期");return;}
     var desc=(document.getElementById("drawerShortDesc").value||"").trim();
-    state.shortDo.push({id:uid(),text:t,description:desc,deadline:d,subtasks:commitSubs()});
+    var nid=uid();var nsub=commitSubs();
+    state.shortDo.push({id:nid,text:t,description:desc,deadline:d,subtasks:nsub});
+    if(nsub.length)expanded[nid]=true;
     ta.value="";save();renderShort();toast("已加入短期（必须做）");closeDrawer();
     if(d<=todayStr())checkShort();
   }
@@ -1107,6 +1153,7 @@
     it.text=t;it.due=d;
     it.description=(document.getElementById("drawerMustDesc").value||"").trim();
     it.subtasks=commitSubs();
+    if(it.subtasks.length)expanded[it.id]=true;
     save();renderMust();closeDrawer();toast("已保存");
   }
   function updateShort(){
@@ -1120,6 +1167,7 @@
     it.text=t;it.deadline=d;
     it.description=(document.getElementById("drawerShortDesc").value||"").trim();
     it.subtasks=commitSubs();
+    if(it.subtasks.length)expanded[it.id]=true;
     save();renderShort();closeDrawer();toast("已保存");
     if(d<=todayStr())checkShort();
   }
@@ -1354,7 +1402,7 @@
   function emptyHTML(t){
     return '<div class="empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M5 8h14M5 8a2 2 0 0 1-2-2 2 2 0 0 1 2-2h14a2 2 0 0 1 2 2 2 2 0 0 1-2 2M5 8v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8" stroke="#B9B2D6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><div>'+t+'</div></div>';
   }
-  function renderAll(){renderMust();renderWorth();renderPool();renderDone();renderShort();}
+  function renderAll(){renderMust();renderWorth();renderPool();renderDone();renderShort();renderReminders();updateTitleBadge();}
   function renderShort(){
     var box=document.getElementById("shortList");
     if(!box)return;
@@ -1403,6 +1451,133 @@
     var wd=["周日","周一","周二","周三","周四","周五","周六"][d.getDay()];
     var el=document.getElementById("dateText");
     if(el)el.textContent=(d.getMonth()+1)+"月"+d.getDate()+"日 "+wd;
+  }
+
+  /* ---------- 临期提醒 ---------- */
+  var BASE_TITLE=document.title;
+  var remindCfg={leadDays:1,notify:true,sound:true};
+  function loadRemindCfg(){
+    try{var r=JSON.parse(localStorage.getItem(REMIND_CFG_KEY));if(r&&typeof r==="object"){
+      remindCfg.leadDays=(typeof r.leadDays==="number"?r.leadDays:1);
+      remindCfg.notify=r.notify!==false;remindCfg.sound=r.sound!==false;
+    }}catch(e){}
+  }
+  function saveRemindCfg(){try{localStorage.setItem(REMIND_CFG_KEY,JSON.stringify(remindCfg));}catch(e){}}
+  function getRemindLog(){try{return JSON.parse(localStorage.getItem(REMIND_LOG_KEY))||{};}catch(e){return {};}}
+  function setRemindLog(o){try{localStorage.setItem(REMIND_LOG_KEY,JSON.stringify(o));}catch(e){}}
+  function reminderCategoryMust(it){
+    if(mustOverdueDays(it)>0)return "over";
+    var due=it.due||it.originDue||todayStr();
+    var remain=-daysBetween(due,todayStr());
+    if(remain>=0&&remain<=remindCfg.leadDays)return "soon";
+    return "";
+  }
+  function reminderCategoryShort(it){
+    var d=it.deadline||"";if(!d)return "";
+    if(d<todayStr())return "over";
+    var remain=daysBetween(todayStr(),d);
+    if(remain>=0&&remain<=remindCfg.leadDays)return "soon";
+    return "";
+  }
+  function computeReminders(){
+    var over=[],soon=[];
+    state.mustDo.forEach(function(it){
+      var c=reminderCategoryMust(it);if(!c)return;
+      var subOver=isDecomposed(it)&&it.subtasks.some(function(s){return s.status!=="done"&&s.due&&daysBetween(s.due,todayStr())>0;});
+      (c==="over"?over:soon).push({id:it.id,text:it.text,list:"must",cat:c,label:mustStatus(it).label,subOver:subOver});
+    });
+    state.shortDo.forEach(function(it){
+      var c=reminderCategoryShort(it);if(!c)return;
+      var label=c==="over"?("已过期 · 截止"+fmtMD(it.deadline)):(it.deadline===todayStr()?"今日到期":"还剩"+daysBetween(todayStr(),it.deadline)+"天");
+      (c==="over"?over:soon).push({id:it.id,text:it.text,list:"short",cat:c,label:label,subOver:false});
+    });
+    return {over:over,soon:soon,total:over.length+soon.length,leadDays:remindCfg.leadDays};
+  }
+  function reminderSettingsHTML(){
+    var np=("Notification" in window)?Notification.permission:"unsupported";
+    var btnTxt=np==="granted"?"桌面提醒已开启":(np==="denied"?"通知被拒绝·去浏览器开启":"开启桌面提醒");
+    return '<div class="rem-set">'+
+      '<label class="rem-set-item">提前提醒 <select id="leadDaysSel" class="rem-sel">'+
+        '<option value="0"'+(remindCfg.leadDays===0?" selected":"")+'>仅当天</option>'+
+        '<option value="1"'+(remindCfg.leadDays===1?" selected":"")+'>1 天</option>'+
+        '<option value="2"'+(remindCfg.leadDays===2?" selected":"")+'>2 天</option>'+
+        '<option value="3"'+(remindCfg.leadDays===3?" selected":"")+'>3 天</option>'+
+      '</select></label>'+
+      '<button class="mini-btn rem-notify" id="remindBtn">'+btnTxt+'</button>'+
+      '<label class="rem-set-item rem-snd"><input type="checkbox" id="soundChk"'+(remindCfg.sound?" checked":"")+' style="width:14px;height:14px;accent-color:var(--purple);"> 提示音</label>'+
+      '</div>';
+  }
+  function renderReminders(){
+    var box=document.getElementById("reminderCard");if(!box)return;
+    var r=computeReminders();
+    var sev=r.over.length?"over":(r.soon.length?"soon":"ok");
+    var head='<div class="rem-head"><div class="rem-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2a7 7 0 0 0-7 7c0 5-2 7-2 7h18s-2-2-2-7a7 7 0 0 0-7-7Zm0 20a3 3 0 0 0 3-3H9a3 3 0 0 0 3 3Z" fill="currentColor"/></svg> 临期提醒</div>'+
+      '<div class="rem-counts"><span class="rem-c over">已逾期 '+r.over.length+'</span><span class="rem-c soon">待逾期 '+r.soon.length+'</span></div></div>';
+    if(r.total===0){
+      box.className="card rem-card rem-ok";
+      box.innerHTML=head+'<div class="rem-calm">✅ 当前没有临期事项，保持节奏就好。</div>'+reminderSettingsHTML();
+      updateBell();return;
+    }
+    box.className="card rem-card rem-"+(sev==="over"?"over":"soon");
+    function row(it){
+      return '<div class="rem-row '+it.cat+'"><span class="rem-dot"></span>'+
+        '<div class="rem-body"><div class="rem-text">'+esc(it.text)+(it.subOver?' <span class="rem-sub">含逾期子步骤</span>':'')+'</div>'+
+        '<div class="rem-label">'+it.label+'</div></div>'+
+        '<button class="mini-btn rem-go" data-act="goto-task" data-list="'+it.list+'" data-id="'+it.id+'">去处理</button></div>';
+    }
+    var html=head;
+    if(r.over.length)html+='<div class="rem-group">'+r.over.map(row).join("")+'</div>';
+    if(r.soon.length)html+='<div class="rem-group">'+r.soon.map(row).join("")+'</div>';
+    html+=reminderSettingsHTML();
+    box.innerHTML=html;updateBell();
+  }
+  function updateTitleBadge(){
+    var r=computeReminders();
+    document.title=(r.total>0?("🔴"+r.total+" · "):"")+BASE_TITLE;
+  }
+  function updateBell(){
+    var b=document.getElementById("bellBtn");if(!b)return;
+    var r=computeReminders(),n=r.total;
+    var dot=b.querySelector(".bell-dot");
+    if(dot){dot.style.display=n>0?"flex":"none";if(n>0)dot.textContent=n;}
+  }
+  function gotoTask(list,id){
+    switchView("cockpit");
+    var sel=list==="short"?"#shortList":"#mustList";
+    var btn=document.querySelector(sel+' [data-id="'+id+'"]');
+    var block=btn?btn.closest(".task-block"):null;
+    if(block){block.scrollIntoView({behavior:"smooth",block:"center"});block.classList.add("flash");setTimeout(function(){block.classList.remove("flash");},1700);}
+  }
+  function playRemindSound(){
+    try{
+      var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+      var c=new AC();
+      function beep(freq,start,dur,vol){var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(0.0001,c.currentTime+start);g.gain.exponentialRampToValueAtTime(vol,c.currentTime+start+0.02);g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+start+dur);o.start(c.currentTime+start);o.stop(c.currentTime+start+dur);}
+      beep(880,0,0.5,0.18);beep(660,0.18,0.5,0.16);
+      setTimeout(function(){try{c.close();}catch(e){}},900);
+    }catch(e){}
+  }
+  function notifyReminders(){
+    if(!remindCfg.notify)return;
+    if(!("Notification" in window)||Notification.permission!=="granted")return;
+    var r=computeReminders();if(r.total===0)return;
+    var log=getRemindLog(),now=Date.now(),changed=false,msgs=[];
+    function consider(item){
+      var key=item.id+":"+item.cat,last=log[key]||0;
+      if(now-last>6*3600*1000){msgs.push((item.cat==="over"?"🔴 已逾期 · ":"🟠 待逾期 · ")+item.text+"（"+item.label+"）");log[key]=now;changed=true;}
+    }
+    r.over.slice(0,3).forEach(consider);r.soon.slice(0,3).forEach(consider);
+    if(msgs.length){
+      try{new Notification("个人工作台 · 临期提醒",{body:(msgs.slice(0,3).join("\n"))+(msgs.length>3?" 等":""),tag:"wb-remind"});}catch(e){}
+      if(remindCfg.sound)playRemindSound();
+    }
+    if(changed)setRemindLog(log);
+  }
+  function requestNotifyPermission(){
+    if(!("Notification" in window)){toast("当前浏览器不支持桌面通知");return;}
+    if(Notification.permission==="default"){Notification.requestPermission(function(){renderReminders();toast("已开启桌面提醒");});}
+    else if(Notification.permission==="denied"){toast("通知被浏览器拒绝，请在站点设置里允许通知");}
+    else{toast("桌面提醒已开启");switchView("cockpit");var c=document.getElementById("reminderCard");if(c)c.scrollIntoView({behavior:"smooth",block:"start"});}
   }
 
   /* ---------- form UI ---------- */
@@ -1769,6 +1944,22 @@
         }
       });
     }
+
+    /* 临期提醒：卡片内事件委托 + 顶部铃铛 */
+    var rcEl=document.getElementById("reminderCard");
+    if(rcEl){
+      rcEl.addEventListener("click",function(e){
+        if(e.target.closest("#remindBtn")){requestNotifyPermission();return;}
+        var ga=e.target.closest('[data-act="goto-task"]');
+        if(ga){gotoTask(ga.getAttribute("data-list"),ga.getAttribute("data-id"));return;}
+      });
+      rcEl.addEventListener("change",function(e){
+        if(e.target.id==="leadDaysSel"){remindCfg.leadDays=parseInt(e.target.value,10)||0;saveRemindCfg();renderReminders();updateTitleBadge();}
+        else if(e.target.id==="soundChk"){remindCfg.sound=e.target.checked;saveRemindCfg();if(e.target.checked)playRemindSound();}
+      });
+    }
+    var bellEl=document.getElementById("bellBtn");
+    if(bellEl)bellEl.addEventListener("click",requestNotifyPermission);
   }
   function onListClick(e){
     var el=e.target.closest("[data-act]");
@@ -1800,10 +1991,15 @@
   /* handlers are wired via event delegation (see onListClick), no window exposure needed */
 
   /* ---------- init ---------- */
-  load();syncShortInit();bind();resetFormUI();renderAll();renderDate();checkShort();syncAvailUI();
+  load();loadRemindCfg();syncShortInit();bind();resetFormUI();renderAll();renderDate();checkShort();syncAvailUI();
   setSync();
   if(cloudReady()){setCloudStatus("同步中…");cloudPull();}
-  setInterval(function(){checkShort();renderDate();if(cloudReady())cloudPull();},60000);
+  notifyReminders();
+  if(remindCfg.notify&&("Notification" in window)&&Notification.permission==="default"){
+    var r0=computeReminders();
+    if(r0.total>0&&!sessionStorage.getItem("wb_remind_hint")){sessionStorage.setItem("wb_remind_hint","1");toast("有 "+r0.total+" 项临期，点右上角铃铛可开启桌面提醒");}
+  }
+  setInterval(function(){checkShort();renderDate();renderReminders();updateTitleBadge();notifyReminders();if(cloudReady())cloudPull();},60000);
   window.addEventListener("focus",function(){if(cloudReady())cloudPull();});
 })();
 </script>
