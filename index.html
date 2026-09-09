@@ -662,7 +662,6 @@
         </div>
         <div data-page-node-id="PrjView008">
           <h2 data-page-node-id="PrjView009">项目跟进 <span class="count-badge" id="projCount" data-page-node-id="PrjView010">0</span></h2>
-          <div class="hint" data-page-node-id="PrjView011">树形：项目 → 阶段（状态+跟进记录）· 赢单状态可手动更新</div>
         </div>
       </div>
       <div class="proj-tabs" id="projTabs" data-page-node-id="PrjView012">
@@ -812,12 +811,12 @@
       <div id="projectForm" class="hide" data-page-node-id="PrjForm001">
         <div class="field full" data-page-node-id="PrjForm002">
           <label data-page-node-id="PrjForm003">项目名称</label>
-          <input type="text" id="projName" placeholder="例如：景杰生物二期投标" maxlength="60" data-page-node-id="PrjForm004">
+          <input type="text" id="projName" placeholder="项目名称" maxlength="60" data-page-node-id="PrjForm004">
         </div>
         <div class="form-grid" data-page-node-id="PrjForm005">
           <div class="field" data-page-node-id="PrjForm006">
             <label data-page-node-id="PrjForm007">负责商务</label>
-            <input type="text" id="projClient" placeholder="如：李晓燕" maxlength="40" data-page-node-id="PrjForm008">
+            <input type="text" id="projClient" placeholder="负责商务姓名" maxlength="40" data-page-node-id="PrjForm008">
           </div>
           <div class="field" data-page-node-id="PrjForm009">
             <label data-page-node-id="PrjForm010">客户类型</label>
@@ -1736,7 +1735,7 @@
     if(ex){
       detail='<div class="proj-detail">';
       if(p.stages.length===0){
-        detail+='<div class="empty small">该项目未勾选阶段。点「编辑」勾选要跟的阶段。</div>';
+        detail+='<div class="empty small">该项目未勾选阶段</div>';
       }
       p.stages.forEach(function(s){
         var recs=s.records.map(function(r,i){
@@ -1781,12 +1780,12 @@
     var activeList=document.getElementById("projectList");if(activeList){
       document.getElementById("projCount").textContent=active.length;
       activeList.innerHTML=active.length?active.map(projectCardHTML).join(""):
-        '<div class="empty">还没有跟进中项目。点上方「＋ 新增项目」，按投标/客户维度建一个，勾选要跟的阶段即可。</div>';
+        '<div class="empty">暂无跟进中项目</div>';
     }
     var archiveList=document.getElementById("archiveList");if(archiveList){
       document.getElementById("archiveCount").textContent=archive.length;
       archiveList.innerHTML=archive.length?archive.map(projectCardHTML).join(""):
-        '<div class="empty">归档暂无项目。将项目状态改为「赢单」或「输单」后自动归入此处。</div>';
+        '<div class="empty">暂无归档项目</div>';
     }
     switchProjectTab(projTab);
   }
