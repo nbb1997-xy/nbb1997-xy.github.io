@@ -405,6 +405,15 @@
   .pl-node.st-doing .pl-dot{background:var(--purple);}
   .pl-node.st-done{border-color:#1E9B56;background:#DCF5E6;}
   .pl-node.st-done .pl-dot{background:#1E9B56;}
+  .stage-editor{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;}
+  .stage-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+  .stage-item{display:inline-flex;align-items:center;gap:6px;background:var(--purple-soft);color:var(--purple);border-radius:999px;padding:4px 5px 4px 12px;font-size:12px;}
+  .stage-item .stage-x{cursor:pointer;border:none;background:transparent;color:var(--purple);font-size:15px;line-height:1;padding:0 3px;}
+  .stage-quick{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:8px;}
+  .stage-quick-tip{font-size:12px;color:var(--muted);}
+  .stage-quick .qc{font-size:12px;border:1px dashed var(--purple);color:var(--purple);background:transparent;border-radius:999px;padding:3px 10px;cursor:pointer;}
+  .stage-add-row{display:flex;gap:8px;}
+  .stage-add-row input{flex:1;min-width:0;}
   .proj-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:4px;}
   .win-seg{display:flex;gap:6px;}
   .proj-tools{display:flex;gap:6px;}
@@ -838,8 +847,18 @@
           </div>
         </div>
         <div class="field full" data-page-node-id="PrjForm018">
-          <label data-page-node-id="PrjForm019">参与阶段（按需勾选，不必全部经历）</label>
-          <div class="stage-checks" id="projStageChecks" data-page-node-id="PrjForm020"></div>
+          <label data-page-node-id="PrjForm019">项目阶段（可自由增删，不限数量）</label>
+          <div class="stage-editor">
+            <div class="stage-list" id="projStageList"></div>
+            <div class="stage-quick">
+              <span class="stage-quick-tip">常用：</span>
+              <span id="projStageQuick"></span>
+            </div>
+            <div class="stage-add-row">
+              <input type="text" id="projStageInput" placeholder="添加自定义阶段，如：商务谈判" maxlength="20">
+              <button type="button" class="mini-btn" id="projStageAdd">＋ 添加阶段</button>
+            </div>
+          </div>
         </div>
         <div class="field full" style="margin-top:12px;" data-page-node-id="PrjForm021">
           <label data-page-node-id="PrjForm022">备注（可选）</label>
@@ -943,14 +962,15 @@
     o.note=o.note||"";
     o.winStatus=PROJ_WIN.indexOf(o.winStatus)>=0?o.winStatus:"推进中";
     if(!Array.isArray(o.stages))o.stages=[];
-    // 仅保留 PROJ_STAGES 中已知的阶段 key（防止旧数据误用），并按标准顺序稳定排序
-    var known={};PROJ_STAGES.forEach(function(s){known[s.key]=true;});
-    o.stages=o.stages.filter(function(s){return s&&known[s.key];}).map(function(s){
+    // 阶段为项目下的子节点（不限数量、允许同名/自定义），全部保留；记录显式携带所属阶段名
+    o.stages=(o.stages||[]).filter(function(s){return s&&(s.name||s.key);}).map(function(s){
+      var nm=s.name||stageName(s.key)||"未命名阶段";
       return {
-        key:s.key,
+        id:s.id||uid(),
+        name:nm,
         status:STAGE_STATUS.indexOf(s.status)>=0?s.status:"未开始",
         records:Array.isArray(s.records)?s.records.filter(function(r){return r&&r.note;}).map(function(r){
-          return {at:r.at||"", note:r.note||"", status:STAGE_STATUS.indexOf(r.status)>=0?r.status:"未开始"};
+          return {id:r.id||uid(), stageId:s.id||"", stageName:r.stageName||nm, at:r.at||"", note:r.note||"", status:STAGE_STATUS.indexOf(r.status)>=0?r.status:"未开始"};
         }):[]
       };
     });
@@ -1605,16 +1625,22 @@
 
   /* ---------- 项目跟进（树形：项目 → 阶段 → 状态/跟进记录） ---------- */
   var projExpanded={};          // 内存态：哪些项目处于展开（不持久化）
+  var projStageDraft=[];        // 内存态：抽屉中阶段草稿（{id,name}），可任意增删、不限数量
   var projWinSel="推进中";       // 抽屉表单当前选中的赢单状态
   function findProject(id){return state.projects.find(function(p){return p.id===id;});}
   function stageName(key){var s=PROJ_STAGES.find(function(x){return x.key===key;});return s?s.name:key;}
   function stageStatusClass(st){return st==="已完成"?"st-done":(st==="进行中"?"st-doing":"st-todo");}
 
-  function renderStageChecks(selectedKeys){
-    var sel=selectedKeys||[];
-    return PROJ_STAGES.map(function(s){
-      var on=sel.indexOf(s.key)>=0?"on":"";
-      return '<button type="button" class="stage-chip '+on+'" data-skey="'+s.key+'">'+s.name+'</button>';
+  function renderStageEditor(){
+    var box=document.getElementById("projStageList");if(!box)return;
+    box.innerHTML=projStageDraft.length?projStageDraft.map(function(s,i){
+      return '<span class="stage-item">'+esc(s.name)+'<button type="button" class="stage-x" data-sidx="'+i+'">×</button></span>';
+    }).join(""):'<span class="stage-quick-tip">暂未添加阶段</span>';
+  }
+  function renderStageQuick(){
+    var box=document.getElementById("projStageQuick");if(!box)return;
+    box.innerHTML=PROJ_STAGES.map(function(s){
+      return '<button type="button" class="qc" data-qname="'+esc(s.name)+'">'+esc(s.name)+'</button>';
     }).join("");
   }
   function buildProjectFromForm(){
@@ -1623,9 +1649,7 @@
     var client=(document.getElementById("projClient").value||"").trim();
     var type=document.getElementById("projType").value||"";
     var note=(document.getElementById("projNote").value||"").trim();
-    var sel=[];
-    document.querySelectorAll("#projStageChecks .stage-chip.on").forEach(function(b){sel.push(b.getAttribute("data-skey"));});
-    var stages=sel.map(function(k){return {key:k,status:"未开始",records:[]};});
+    var stages=projStageDraft.map(function(d){return {id:d.id,name:d.name,status:"未开始",records:[]};});
     return {name:name,client:client,type:type,winStatus:projWinSel,note:note,stages:stages};
   }
   function openProjectDrawer(p){
@@ -1646,7 +1670,7 @@
       document.getElementById("projNote").value=p.note||"";
       projWinSel=PROJ_WIN.indexOf(p.winStatus)>=0?p.winStatus:"推进中";
       document.getElementById("projWinSeg").querySelectorAll("button").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-win")===projWinSel);});
-      document.getElementById("projStageChecks").innerHTML=renderStageChecks(p.stages.map(function(s){return s.key;}));
+      projStageDraft=p.stages.map(function(s){return {id:s.id,name:s.name};});
     } else {
       document.getElementById("projName").value="";
       document.getElementById("projClient").value="";
@@ -1654,8 +1678,9 @@
       document.getElementById("projNote").value="";
       projWinSel="推进中";
       document.getElementById("projWinSeg").querySelectorAll("button").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-win")==="推进中");});
-      document.getElementById("projStageChecks").innerHTML=renderStageChecks();
+      projStageDraft=[];
     }
+    renderStageEditor();renderStageQuick();
     document.getElementById("drawerMask").classList.add("show");
     setTimeout(function(){var f=document.getElementById("projName");if(f)f.focus();},80);
   }
@@ -1668,11 +1693,11 @@
   function updateProject(){
     var p=findProject(editId);if(!p){closeDrawer();return;}
     var d=buildProjectFromForm();if(!d){toast("请填写项目名称");return;}
-    // 灵活更新阶段集：保留已有阶段的状态与记录，新增补默认、移除删除
-    var oldMap={};p.stages.forEach(function(s){oldMap[s.key]=s;});
+    // 灵活更新阶段集（按 id 比对）：保留已有阶段的状态与记录，新增补默认、移除删除；不限制阶段数量/唯一性
+    var oldMap={};p.stages.forEach(function(s){oldMap[s.id]=s;});
     p.stages=d.stages.map(function(s){
-      var old=oldMap[s.key];
-      return old?{key:s.key,status:old.status,records:old.records}:{key:s.key,status:"未开始",records:[]};
+      var old=oldMap[s.id];
+      return old?{id:s.id,name:s.name,status:old.status,records:old.records}:{id:s.id,name:s.name,status:"未开始",records:[]};
     });
     p.name=d.name;p.client=d.client;p.type=d.type;p.note=d.note;p.winStatus=d.winStatus;
     save();renderProjects();closeDrawer();toast("已保存");
@@ -1686,21 +1711,21 @@
   }
   function cycleStageStatus(id,key){
     var p=findProject(id);if(!p)return;
-    var s=p.stages.find(function(x){return x.key===key;});if(!s)return;
+    var s=p.stages.find(function(x){return x.id===key;});if(!s)return;
     var i=STAGE_STATUS.indexOf(s.status);
     s.status=STAGE_STATUS[(i+1)%STAGE_STATUS.length];
     save();renderProjects();
   }
   function addStageRecord(id,key,note){
     var p=findProject(id);if(!p)return;
-    var s=p.stages.find(function(x){return x.key===key;});if(!s)return;
+    var s=p.stages.find(function(x){return x.id===key;});if(!s)return;
     note=(note||"").trim();if(!note)return;
-    s.records.push({at:nowStamp(),note:note,status:s.status});
+    s.records.push({id:uid(),stageId:key,stageName:s.name,at:nowStamp(),note:note,status:s.status});
     save();renderProjects();
   }
   function delStageRecord(id,key,idx){
     var p=findProject(id);if(!p)return;
-    var s=p.stages.find(function(x){return x.key===key;});if(!s)return;
+    var s=p.stages.find(function(x){return x.id===key;});if(!s)return;
     s.records.splice(idx,1);save();renderProjects();
   }
   function deleteProject(id){
@@ -1727,27 +1752,27 @@
     var ex=projExpanded[p.id]?"ex":"";
     var win=winBadgeClass(p.winStatus);
     var pipeline=p.stages.map(function(s){
-      return '<button class="pl-node '+stageStatusClass(s.status)+'" data-act="stage-cycle" data-id="'+p.id+'" data-stage="'+s.key+'" title="点击切换状态">'+
-        '<span class="pl-dot"></span>'+stageName(s.key)+
+      return '<button class="pl-node '+stageStatusClass(s.status)+'" data-act="stage-cycle" data-id="'+p.id+'" data-stage="'+s.id+'" title="点击切换状态">'+
+        '<span class="pl-dot"></span>'+esc(s.name)+
         '<span class="pl-st">'+s.status+'</span></button>';
     }).join('<span class="pl-arrow">›</span>');
     var detail="";
     if(ex){
       detail='<div class="proj-detail">';
       if(p.stages.length===0){
-        detail+='<div class="empty small">该项目未勾选阶段</div>';
+        detail+='<div class="empty small">该项目未添加阶段</div>';
       }
       p.stages.forEach(function(s){
         var recs=s.records.map(function(r,i){
           return '<li class="rec-item"><span class="rec-at">'+r.at+'</span><span class="rec-note">'+esc(r.note)+'</span>'+
-            '<button class="rec-del" data-act="stage-del-rec" data-id="'+p.id+'" data-stage="'+s.key+'" data-ridx="'+i+'">×</button></li>';
+            '<button class="rec-del" data-act="stage-del-rec" data-id="'+p.id+'" data-stage="'+s.id+'" data-ridx="'+i+'">×</button></li>';
         }).join("");
         detail+='<div class="stage-block">'+
-          '<div class="stage-h"><span class="'+stageStatusClass(s.status)+'">'+stageName(s.key)+'</span>'+
+          '<div class="stage-h"><span class="'+stageStatusClass(s.status)+'">'+esc(s.name)+'</span>'+
           '<span class="stage-st '+stageStatusClass(s.status)+'">'+s.status+'</span></div>'+
           '<ul class="rec-list">'+(recs||'<li class="rec-empty">暂无跟进记录</li>')+'</ul>'+
-          '<div class="rec-add"><input type="text" class="rec-in" id="recIn_'+p.id+'_'+s.key+'" placeholder="记一笔跟进（做了什么/结论/风险）…" maxlength="120">'+
-          '<button class="mini-btn" data-act="stage-add-rec" data-id="'+p.id+'" data-stage="'+s.key+'">记录</button></div>'+
+          '<div class="rec-add"><input type="text" class="rec-in" id="recIn_'+p.id+'_'+s.id+'" placeholder="记一笔跟进（做了什么/结论/风险）…" maxlength="120">'+
+          '<button class="mini-btn" data-act="stage-add-rec" data-id="'+p.id+'" data-stage="'+s.id+'">记录</button></div>'+
         '</div>';
       });
       detail+='</div>';
@@ -2244,11 +2269,28 @@
       projWinSel=b.getAttribute("data-win");
       pws.querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b);});
     });
-    // 阶段勾选 chips
-    var psc=document.getElementById("projStageChecks");
-    if(psc)psc.addEventListener("click",function(e){
-      var b=e.target.closest(".stage-chip");if(!b)return;
-      b.classList.toggle("on");
+    // 阶段编辑器：删除、快捷添加、自定义添加
+    var psl=document.getElementById("projStageList");
+    if(psl)psl.addEventListener("click",function(e){
+      var b=e.target.closest(".stage-x");if(!b)return;
+      var i=parseInt(b.getAttribute("data-sidx"),10);
+      if(!isNaN(i)&&projStageDraft[i])projStageDraft.splice(i,1);
+      renderStageEditor();
+    });
+    var psq=document.getElementById("projStageQuick");
+    if(psq)psq.addEventListener("click",function(e){
+      var b=e.target.closest(".qc");if(!b)return;
+      var nm=b.getAttribute("data-qname");if(!nm)return;
+      projStageDraft.push({id:uid(),name:nm});
+      renderStageEditor();
+    });
+    var psa=document.getElementById("projStageAdd");
+    if(psa)psa.addEventListener("click",function(){
+      var inp=document.getElementById("projStageInput");
+      var nm=(inp&&inp.value||"").trim();if(!nm)return;
+      projStageDraft.push({id:uid(),name:nm});
+      if(inp)inp.value="";
+      renderStageEditor();
     });
 
     document.getElementById("typeSeg").querySelectorAll("button").forEach(function(b){
