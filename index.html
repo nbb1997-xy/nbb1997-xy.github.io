@@ -378,6 +378,11 @@
   .proj-empty{font-size:13px;color:var(--muted);text-align:center;padding:24px 0;}
 
   /* ---------- 项目跟进 ---------- */
+  .proj-tabs{display:flex;gap:8px;margin:12px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px;}
+  .proj-tab{background:none;border:none;font-size:14px;font-weight:600;color:var(--muted);padding:7px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:5px;}
+  .proj-tab.on{background:var(--purple-soft);color:var(--purple);}
+  .proj-tab .count-badge{background:rgba(0,0,0,0.06);color:var(--muted);}
+  .proj-tab.on .count-badge{background:var(--purple);color:#fff;}
   .proj-card{border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:12px;background:var(--bg-2);}
   .proj-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;cursor:pointer;}
   .proj-name{font-size:15px;font-weight:700;color:var(--text);line-height:1.3;}
@@ -660,11 +665,16 @@
           <div class="hint" data-page-node-id="PrjView011">树形：项目 → 阶段（状态+跟进记录）· 赢单状态可手动更新</div>
         </div>
       </div>
-      <button class="add-btn block-add" id="openProjectDrawer" style="background:linear-gradient(135deg,#7C5CFC,#A78BFA);" data-page-node-id="PrjView012">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" data-page-node-id="PrjView013"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.4" stroke-linecap="round" data-page-node-id="PrjView014"/></svg>
+      <div class="proj-tabs" id="projTabs" data-page-node-id="PrjView012">
+        <button class="proj-tab on" data-projtab="active" data-page-node-id="PrjView013">跟进中 <span class="count-badge" id="projCount" data-page-node-id="PrjView014">0</span></button>
+        <button class="proj-tab" data-projtab="archive" data-page-node-id="PrjView015">项目归档 <span class="count-badge" id="archiveCount" data-page-node-id="PrjView016">0</span></button>
+      </div>
+      <button class="add-btn block-add" id="openProjectDrawer" style="background:linear-gradient(135deg,#7C5CFC,#A78BFA);" data-page-node-id="PrjView017">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" data-page-node-id="PrjView018"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.4" stroke-linecap="round" data-page-node-id="PrjView019"/></svg>
         新增项目
       </button>
-      <div class="list" id="projectList" data-page-node-id="PrjView015"></div>
+      <div class="list" id="projectList" data-page-node-id="PrjView020"></div>
+      <div class="list hide" id="archiveList" data-page-node-id="PrjView021"></div>
     </div>
   </section>
 
@@ -806,12 +816,18 @@
         </div>
         <div class="form-grid" data-page-node-id="PrjForm005">
           <div class="field" data-page-node-id="PrjForm006">
-            <label data-page-node-id="PrjForm007">客户 / 归属</label>
-            <input type="text" id="projClient" placeholder="如：杭州景杰生物" maxlength="40" data-page-node-id="PrjForm008">
+            <label data-page-node-id="PrjForm007">负责商务</label>
+            <input type="text" id="projClient" placeholder="如：李晓燕" maxlength="40" data-page-node-id="PrjForm008">
           </div>
           <div class="field" data-page-node-id="PrjForm009">
-            <label data-page-node-id="PrjForm010">类型 / 标签</label>
-            <input type="text" id="projType" placeholder="如：B2B投标" maxlength="30" data-page-node-id="PrjForm011">
+            <label data-page-node-id="PrjForm010">客户类型</label>
+            <select id="projType" data-page-node-id="PrjForm011">
+              <option value="">请选择</option>
+              <option value="国企">国企</option>
+              <option value="政府">政府</option>
+              <option value="小企业">小企业</option>
+              <option value="集团公司">集团公司</option>
+            </select>
           </div>
         </div>
         <div class="field full" data-page-node-id="PrjForm012">
@@ -862,7 +878,7 @@
      8 个标准阶段，各项目可按需灵活挑选，不必全部经历。
      阶段子节点携带 status（未开始/进行中/已完成）与 records（跟进记录）。 */
   var PROJ_STAGES=[
-    {key:"register", name:"商机登记"},
+    {key:"register", name:"项目判断"},
     {key:"research", name:"需求调研"},
     {key:"design",   name:"方案设计"},
     {key:"poc",      name:"POC验证"},
@@ -924,7 +940,7 @@
     o.id=o.id||uid();
     o.name=o.name||"未命名项目";
     o.client=o.client||"";
-    o.type=o.type||"";
+    o.type=["国企","政府","小企业","集团公司"].indexOf(o.type)>=0?o.type:"";
     o.note=o.note||"";
     o.winStatus=PROJ_WIN.indexOf(o.winStatus)>=0?o.winStatus:"推进中";
     if(!Array.isArray(o.stages))o.stages=[];
@@ -1606,7 +1622,7 @@
     var name=(document.getElementById("projName").value||"").trim();
     if(!name)return null;
     var client=(document.getElementById("projClient").value||"").trim();
-    var type=(document.getElementById("projType").value||"").trim();
+    var type=document.getElementById("projType").value||"";
     var note=(document.getElementById("projNote").value||"").trim();
     var sel=[];
     document.querySelectorAll("#projStageChecks .stage-chip.on").forEach(function(b){sel.push(b.getAttribute("data-skey"));});
@@ -1627,7 +1643,7 @@
     if(isEdit){
       document.getElementById("projName").value=p.name||"";
       document.getElementById("projClient").value=p.client||"";
-      document.getElementById("projType").value=p.type||"";
+      document.getElementById("projType").value=["国企","政府","小企业","集团公司"].indexOf(p.type)>=0?p.type:"";
       document.getElementById("projNote").value=p.note||"";
       projWinSel=PROJ_WIN.indexOf(p.winStatus)>=0?p.winStatus:"推进中";
       document.getElementById("projWinSeg").querySelectorAll("button").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-win")===projWinSel);});
@@ -1647,7 +1663,8 @@
   function addProject(){
     var d=buildProjectFromForm();if(!d){toast("请填写项目名称");return;}
     d.id=uid();d.createdAt=todayStr();
-    state.projects.push(d);save();renderProjects();closeDrawer();toast("已新增项目");
+    state.projects.push(d);save();closeDrawer();toast("已新增项目");
+    projTab="active";renderProjects();
   }
   function updateProject(){
     var p=findProject(editId);if(!p){closeDrawer();return;}
@@ -1664,7 +1681,9 @@
   function setWinStatus(id,st){
     var p=findProject(id);if(!p)return;
     if(PROJ_WIN.indexOf(st)<0)return;
+    var wasArchived=p.winStatus!=="推进中";
     p.winStatus=st;save();renderProjects();updateTitleBadge();
+    if(wasArchived&&st==="推进中")projTab="active";
   }
   function cycleStageStatus(id,key){
     var p=findProject(id);if(!p)return;
@@ -1694,64 +1713,82 @@
     return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes());
   }
   function winBadgeClass(st){return st==="赢单"?"wb-win":(st==="输单"?"wb-lose":"wb-prog");}
-  function renderProjects(){
-    var list=document.getElementById("projectList");if(!list)return;
-    document.getElementById("projCount").textContent=state.projects.length;
-    if(state.projects.length===0){
-      list.innerHTML='<div class="empty">还没有项目。点上方「＋ 新增项目」，按投标/客户维度建一个，勾选要跟的阶段即可。</div>';
-      return;
-    }
-    list.innerHTML=state.projects.map(function(p){
-      var ex=projExpanded[p.id]?"ex":"";
-      var win=winBadgeClass(p.winStatus);
-      var pipeline=p.stages.map(function(s){
-        return '<button class="pl-node '+stageStatusClass(s.status)+'" data-act="stage-cycle" data-id="'+p.id+'" data-stage="'+s.key+'" title="点击切换状态">'+
-          '<span class="pl-dot"></span>'+stageName(s.key)+
-          '<span class="pl-st">'+s.status+'</span></button>';
-      }).join('<span class="pl-arrow">›</span>');
-      var detail="";
-      if(ex){
-        detail='<div class="proj-detail">';
-        if(p.stages.length===0){
-          detail+='<div class="empty small">该项目未勾选阶段。点「编辑」勾选要跟的阶段。</div>';
-        }
-        p.stages.forEach(function(s){
-          var recs=s.records.map(function(r,i){
-            return '<li class="rec-item"><span class="rec-at">'+r.at+'</span><span class="rec-note">'+esc(r.note)+'</span>'+
-              '<button class="rec-del" data-act="stage-del-rec" data-id="'+p.id+'" data-stage="'+s.key+'" data-ridx="'+i+'">×</button></li>';
-          }).join("");
-          detail+='<div class="stage-block">'+
-            '<div class="stage-h"><span class="'+stageStatusClass(s.status)+'">'+stageName(s.key)+'</span>'+
-            '<span class="stage-st '+stageStatusClass(s.status)+'">'+s.status+'</span></div>'+
-            '<ul class="rec-list">'+(recs||'<li class="rec-empty">暂无跟进记录</li>')+'</ul>'+
-            '<div class="rec-add"><input type="text" class="rec-in" id="recIn_'+p.id+'_'+s.key+'" placeholder="记一笔跟进（做了什么/结论/风险）…" maxlength="120">'+
-            '<button class="mini-btn" data-act="stage-add-rec" data-id="'+p.id+'" data-stage="'+s.key+'">记录</button></div>'+
-          '</div>';
-        });
-        detail+='</div>';
+  var projTab="active";           // 项目视图内当前 Tab：active / archive
+  function switchProjectTab(tab){
+    projTab=tab;
+    document.querySelectorAll("#projTabs .proj-tab").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-projtab")===tab);});
+    var addBtn=document.getElementById("openProjectDrawer");
+    var activeList=document.getElementById("projectList");
+    var archiveList=document.getElementById("archiveList");
+    if(addBtn)addBtn.classList.toggle("hide",tab!=="active");
+    if(activeList)activeList.classList.toggle("hide",tab!=="active");
+    if(archiveList)archiveList.classList.toggle("hide",tab!=="archive");
+  }
+  function projectCardHTML(p){
+    var ex=projExpanded[p.id]?"ex":"";
+    var win=winBadgeClass(p.winStatus);
+    var pipeline=p.stages.map(function(s){
+      return '<button class="pl-node '+stageStatusClass(s.status)+'" data-act="stage-cycle" data-id="'+p.id+'" data-stage="'+s.key+'" title="点击切换状态">'+
+        '<span class="pl-dot"></span>'+stageName(s.key)+
+        '<span class="pl-st">'+s.status+'</span></button>';
+    }).join('<span class="pl-arrow">›</span>');
+    var detail="";
+    if(ex){
+      detail='<div class="proj-detail">';
+      if(p.stages.length===0){
+        detail+='<div class="empty small">该项目未勾选阶段。点「编辑」勾选要跟的阶段。</div>';
       }
-      return '<div class="proj-card">'+
-        '<div class="proj-top" data-act="proj-toggle" data-id="'+p.id+'">'+
-          '<div class="proj-main">'+
-            '<div class="proj-name">'+esc(p.name)+'</div>'+
-            '<div class="proj-meta">'+(p.client?'<span>'+esc(p.client)+'</span>':'')+(p.type?'<span class="proj-tag">'+esc(p.type)+'</span>':'')+'</div>'+
-          '</div>'+
-          '<div class="proj-right">'+
-            '<span class="win-badge '+win+'">'+p.winStatus+'</span>'+
-            '<button class="chev '+(ex?"up":"")+'">▾</button>'+
-          '</div>'+
+      p.stages.forEach(function(s){
+        var recs=s.records.map(function(r,i){
+          return '<li class="rec-item"><span class="rec-at">'+r.at+'</span><span class="rec-note">'+esc(r.note)+'</span>'+
+            '<button class="rec-del" data-act="stage-del-rec" data-id="'+p.id+'" data-stage="'+s.key+'" data-ridx="'+i+'">×</button></li>';
+        }).join("");
+        detail+='<div class="stage-block">'+
+          '<div class="stage-h"><span class="'+stageStatusClass(s.status)+'">'+stageName(s.key)+'</span>'+
+          '<span class="stage-st '+stageStatusClass(s.status)+'">'+s.status+'</span></div>'+
+          '<ul class="rec-list">'+(recs||'<li class="rec-empty">暂无跟进记录</li>')+'</ul>'+
+          '<div class="rec-add"><input type="text" class="rec-in" id="recIn_'+p.id+'_'+s.key+'" placeholder="记一笔跟进（做了什么/结论/风险）…" maxlength="120">'+
+          '<button class="mini-btn" data-act="stage-add-rec" data-id="'+p.id+'" data-stage="'+s.key+'">记录</button></div>'+
+        '</div>';
+      });
+      detail+='</div>';
+    }
+    return '<div class="proj-card">'+
+      '<div class="proj-top" data-act="proj-toggle" data-id="'+p.id+'">'+
+        '<div class="proj-main">'+
+          '<div class="proj-name">'+esc(p.name)+'</div>'+
+          '<div class="proj-meta">'+(p.client?'<span>'+esc(p.client)+'</span>':'')+(p.type?'<span class="proj-tag">'+esc(p.type)+'</span>':'')+'</div>'+
         '</div>'+
-        '<div class="proj-pipeline">'+pipeline+'</div>'+
-        '<div class="proj-actions">'+
-          '<div class="win-seg">'+PROJ_WIN.map(function(w){
-            return '<button class="mini-btn '+(p.winStatus===w?"on":"")+'" data-act="proj-win" data-id="'+p.id+'" data-win="'+w+'">'+w+'</button>';
-          }).join("")+'</div>'+
-          '<div class="proj-tools"><button class="mini-btn" data-act="proj-edit" data-id="'+p.id+'">编辑</button>'+
-          '<button class="mini-btn danger" data-act="proj-del" data-id="'+p.id+'">删除</button></div>'+
+        '<div class="proj-right">'+
+          '<span class="win-badge '+win+'">'+p.winStatus+'</span>'+
+          '<button class="chev '+(ex?"up":"")+'">▾</button>'+
         '</div>'+
-        detail+
-      '</div>';
-    }).join("");
+      '</div>'+
+      '<div class="proj-pipeline">'+pipeline+'</div>'+
+      '<div class="proj-actions">'+
+        '<div class="win-seg">'+PROJ_WIN.map(function(w){
+          return '<button class="mini-btn '+(p.winStatus===w?"on":"")+'" data-act="proj-win" data-id="'+p.id+'" data-win="'+w+'">'+w+'</button>';
+        }).join("")+'</div>'+
+        '<div class="proj-tools"><button class="mini-btn" data-act="proj-edit" data-id="'+p.id+'">编辑</button>'+
+        '<button class="mini-btn danger" data-act="proj-del" data-id="'+p.id+'">删除</button></div>'+
+      '</div>'+
+      detail+
+    '</div>';
+  }
+  function renderProjects(){
+    var active=state.projects.filter(function(p){return p.winStatus==="推进中";});
+    var archive=state.projects.filter(function(p){return p.winStatus!=="推进中";});
+    var activeList=document.getElementById("projectList");if(activeList){
+      document.getElementById("projCount").textContent=active.length;
+      activeList.innerHTML=active.length?active.map(projectCardHTML).join(""):
+        '<div class="empty">还没有跟进中项目。点上方「＋ 新增项目」，按投标/客户维度建一个，勾选要跟的阶段即可。</div>';
+    }
+    var archiveList=document.getElementById("archiveList");if(archiveList){
+      document.getElementById("archiveCount").textContent=archive.length;
+      archiveList.innerHTML=archive.length?archive.map(projectCardHTML).join(""):
+        '<div class="empty">归档暂无项目。将项目状态改为「赢单」或「输单」后自动归入此处。</div>';
+    }
+    switchProjectTab(projTab);
   }
   function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
   function renderShort(){
@@ -2197,6 +2234,10 @@
     document.getElementById("openPoolDrawer").addEventListener("click",function(){openDrawer("pool");});
     var opd=document.getElementById("openProjectDrawer");
     if(opd)opd.addEventListener("click",function(){openProjectDrawer(null);});
+    // 项目视图内 Tab 切换
+    document.querySelectorAll("#projTabs .proj-tab").forEach(function(b){
+      b.addEventListener("click",function(){switchProjectTab(b.getAttribute("data-projtab"));});
+    });
     // 赢单状态段
     var pws=document.getElementById("projWinSeg");
     if(pws)pws.addEventListener("click",function(e){
@@ -2301,6 +2342,8 @@
     });
     var projEl=document.getElementById("projectList");
     if(projEl)projEl.addEventListener("click",onListClick);
+    var archEl=document.getElementById("archiveList");
+    if(archEl)archEl.addEventListener("click",onListClick);
     // 短期列表：截止日期变更（改期 / 到期立即迁移）
     var shortEl=document.getElementById("shortList");
     if(shortEl){
