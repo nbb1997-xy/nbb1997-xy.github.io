@@ -352,8 +352,8 @@
   .win-输单{background:#FBE3E3;color:#D6453F;}
   .proj-summary{font-size:12.5px;color:var(--muted);padding:0 16px 12px;}
   .proj-tree{padding:6px 16px 14px;border-top:1px dashed var(--line);}
-  .stage-block{padding:10px 0;border-bottom:1px solid var(--line);}
-  .stage-block:last-child{border-bottom:none;}
+  .proj-tree .stage-block{padding:10px 0;border-bottom:1px solid var(--line);}
+  .proj-tree .stage-block:last-child{border-bottom:none;}
   .stage-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
   .stage-name{font-size:14px;font-weight:600;color:var(--text);}
   .stage-status{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;cursor:pointer;border:none;white-space:nowrap;}
@@ -419,8 +419,13 @@
   .win-seg{display:flex;gap:6px;}
   .proj-tools{display:flex;gap:6px;}
   .proj-detail{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px;}
-  .stage-block{margin-bottom:12px;}
+  .stage-tree{border-left:2px solid var(--purple-soft);padding-left:18px;margin-left:10px;}
+  .stage-block{position:relative;margin-bottom:16px;}
+  .stage-block:last-child{margin-bottom:0;}
+  .stage-block::before{content:"";position:absolute;left:-18px;top:14px;width:16px;height:2px;background:var(--purple-soft);border-radius:1px;}
+  .stage-block::after{content:"";position:absolute;left:-22px;top:11px;width:6px;height:6px;border-radius:50%;background:var(--purple);}
   .stage-h{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;}
+  .stage-name{padding-left:2px;}
   .stage-st{font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px;}
   .stage-st.st-todo{background:#EEF0F4;color:#8A90A0;}
   .stage-st.st-doing{background:var(--purple-soft);color:var(--purple);}
@@ -1756,7 +1761,7 @@
     if(archiveList)archiveList.classList.toggle("hide",tab!=="archive");
   }
   function projectCardHTML(p){
-    var ex=projExpanded[p.id]?"ex":"";
+    var ex=projExpanded[p.id]!==false?"ex":"";   // 默认展开树形层级
     var win=winBadgeClass(p.winStatus);
     var pipeline=p.stages.map(function(s){
       return '<button class="pl-node '+stageStatusClass(s.status)+'" data-act="stage-cycle" data-id="'+p.id+'" data-stage="'+s.id+'" title="点击切换状态">'+
@@ -1770,20 +1775,22 @@
         detail+='<div class="empty small">尚未添加阶段，无法记录跟进。先建一个阶段即可开始记。</div>'+
           '<div class="rec-add"><button class="mini-btn" data-act="proj-add-stage" data-id="'+p.id+'">＋ 添加阶段</button></div>';
       } else {
+        detail+='<div class="stage-tree">';
         p.stages.forEach(function(s){
           var recs=s.records.map(function(r,i){
             return '<li class="rec-item"><span class="rec-at">'+r.at+'</span><span class="rec-note">'+esc(r.note)+'</span>'+
               '<button class="rec-del" data-act="stage-del-rec" data-id="'+p.id+'" data-stage="'+s.id+'" data-ridx="'+i+'">×</button></li>';
           }).join("");
-          detail+='<div class="stage-block">'+
-            '<div class="stage-h"><span class="'+stageStatusClass(s.status)+'">'+esc(s.name)+'</span>'+
+          detail+='<div class="stage-block" data-stage="'+s.id+'">'+
+            '<div class="stage-h"><span class="stage-name '+stageStatusClass(s.status)+'">'+esc(s.name)+'</span>'+
             '<span class="stage-st '+stageStatusClass(s.status)+'">'+s.status+'</span></div>'+
             '<ul class="rec-list">'+(recs||'<li class="rec-empty">暂无跟进记录</li>')+'</ul>'+
             '<div class="rec-add"><input type="text" class="rec-in" id="recIn_'+p.id+'_'+s.id+'" placeholder="记一笔跟进（做了什么/结论/风险）…" maxlength="120">'+
             '<button class="mini-btn" data-act="stage-add-rec" data-id="'+p.id+'" data-stage="'+s.id+'">＋ 记一笔</button></div>'+
           '</div>';
         });
-        detail+='<div class="rec-add" style="margin-top:2px;"><button class="mini-btn ghost" data-act="proj-add-stage" data-id="'+p.id+'">＋ 再添加一个阶段</button></div>';
+        detail+='</div>'+
+          '<div class="rec-add" style="margin-top:2px;"><button class="mini-btn ghost" data-act="proj-add-stage" data-id="'+p.id+'">＋ 再添加一个阶段</button></div>';
       }
       detail+='</div>';
     }
@@ -2455,7 +2462,7 @@
     else if(act==="sub-up")moveSub(idv,subv,-1);
     else if(act==="sub-down")moveSub(idv,subv,1);
     /* ---- 项目跟进 ---- */
-    else if(act==="proj-toggle"){ if(projExpanded[idv])delete projExpanded[idv]; else projExpanded[idv]=true; renderProjects(); }
+    else if(act==="proj-toggle"){ if(projExpanded[idv]!==false)projExpanded[idv]=false; else delete projExpanded[idv]; renderProjects(); }
     else if(act==="proj-edit"){ var pe=findProject(idv); if(pe)openProjectDrawer(pe); }
     else if(act==="proj-win"){ setWinStatus(idv, el.getAttribute("data-win")); }
     else if(act==="stage-cycle"){ cycleStageStatus(idv, el.getAttribute("data-stage")); }
