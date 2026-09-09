@@ -395,6 +395,7 @@
   .win-badge.wb-lose{background:#FDE3E7;color:#D8455C;}
   .chev{background:none;border:none;font-size:15px;color:var(--muted);transition:transform .2s;cursor:pointer;}
   .chev.up{transform:rotate(180deg);}
+  .expand-hint{font-size:12px;color:var(--purple);font-weight:600;white-space:nowrap;user-select:none;}
   .proj-pipeline{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:11px 0 8px;}
   .pl-node{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 11px;font-size:12px;color:var(--text);cursor:pointer;}
   .pl-dot{width:7px;height:7px;border-radius:50%;background:#C7CBD6;}
@@ -1687,7 +1688,7 @@
   function addProject(){
     var d=buildProjectFromForm();if(!d){toast("请填写项目名称");return;}
     d.id=uid();d.createdAt=todayStr();
-    state.projects.push(d);save();closeDrawer();toast("已新增项目");
+    state.projects.push(d);projExpanded[d.id]=true;save();closeDrawer();toast("已新增项目（已展开，可直接记跟进）");
     projTab="active";renderProjects();
   }
   function updateProject(){
@@ -1721,6 +1722,12 @@
     var s=p.stages.find(function(x){return x.id===key;});if(!s)return;
     note=(note||"").trim();if(!note)return;
     s.records.push({id:uid(),stageId:key,stageName:s.name,at:nowStamp(),note:note,status:s.status});
+    save();renderProjects();
+  }
+  function addStageInline(id,name){
+    var p=findProject(id);if(!p)return;
+    var nm=(name||"").trim();if(!nm)nm="阶段"+(p.stages.length+1);
+    p.stages.push({id:uid(),name:nm,status:"未开始",records:[]});
     save();renderProjects();
   }
   function delStageRecord(id,key,idx){
@@ -1760,21 +1767,24 @@
     if(ex){
       detail='<div class="proj-detail">';
       if(p.stages.length===0){
-        detail+='<div class="empty small">该项目未添加阶段</div>';
+        detail+='<div class="empty small">尚未添加阶段，无法记录跟进。先建一个阶段即可开始记。</div>'+
+          '<div class="rec-add"><button class="mini-btn" data-act="proj-add-stage" data-id="'+p.id+'">＋ 添加阶段</button></div>';
+      } else {
+        p.stages.forEach(function(s){
+          var recs=s.records.map(function(r,i){
+            return '<li class="rec-item"><span class="rec-at">'+r.at+'</span><span class="rec-note">'+esc(r.note)+'</span>'+
+              '<button class="rec-del" data-act="stage-del-rec" data-id="'+p.id+'" data-stage="'+s.id+'" data-ridx="'+i+'">×</button></li>';
+          }).join("");
+          detail+='<div class="stage-block">'+
+            '<div class="stage-h"><span class="'+stageStatusClass(s.status)+'">'+esc(s.name)+'</span>'+
+            '<span class="stage-st '+stageStatusClass(s.status)+'">'+s.status+'</span></div>'+
+            '<ul class="rec-list">'+(recs||'<li class="rec-empty">暂无跟进记录</li>')+'</ul>'+
+            '<div class="rec-add"><input type="text" class="rec-in" id="recIn_'+p.id+'_'+s.id+'" placeholder="记一笔跟进（做了什么/结论/风险）…" maxlength="120">'+
+            '<button class="mini-btn" data-act="stage-add-rec" data-id="'+p.id+'" data-stage="'+s.id+'">＋ 记一笔</button></div>'+
+          '</div>';
+        });
+        detail+='<div class="rec-add" style="margin-top:2px;"><button class="mini-btn ghost" data-act="proj-add-stage" data-id="'+p.id+'">＋ 再添加一个阶段</button></div>';
       }
-      p.stages.forEach(function(s){
-        var recs=s.records.map(function(r,i){
-          return '<li class="rec-item"><span class="rec-at">'+r.at+'</span><span class="rec-note">'+esc(r.note)+'</span>'+
-            '<button class="rec-del" data-act="stage-del-rec" data-id="'+p.id+'" data-stage="'+s.id+'" data-ridx="'+i+'">×</button></li>';
-        }).join("");
-        detail+='<div class="stage-block">'+
-          '<div class="stage-h"><span class="'+stageStatusClass(s.status)+'">'+esc(s.name)+'</span>'+
-          '<span class="stage-st '+stageStatusClass(s.status)+'">'+s.status+'</span></div>'+
-          '<ul class="rec-list">'+(recs||'<li class="rec-empty">暂无跟进记录</li>')+'</ul>'+
-          '<div class="rec-add"><input type="text" class="rec-in" id="recIn_'+p.id+'_'+s.id+'" placeholder="记一笔跟进（做了什么/结论/风险）…" maxlength="120">'+
-          '<button class="mini-btn" data-act="stage-add-rec" data-id="'+p.id+'" data-stage="'+s.id+'">记录</button></div>'+
-        '</div>';
-      });
       detail+='</div>';
     }
     return '<div class="proj-card">'+
@@ -1785,7 +1795,7 @@
         '</div>'+
         '<div class="proj-right">'+
           '<span class="win-badge '+win+'">'+p.winStatus+'</span>'+
-          '<button class="chev '+(ex?"up":"")+'">▾</button>'+
+          '<span class="expand-hint">'+(ex?"收起 ▴":"展开跟进 ▾")+'</span>'+
         '</div>'+
       '</div>'+
       '<div class="proj-pipeline">'+pipeline+'</div>'+
@@ -2451,6 +2461,7 @@
     else if(act==="stage-cycle"){ cycleStageStatus(idv, el.getAttribute("data-stage")); }
     else if(act==="proj-del"){ confirmModal("删除项目","确定删除该项目及其全部阶段、跟进记录？此操作不可恢复。",function(){ deleteProject(idv); }); }
     else if(act==="stage-add-rec"){ var sk=el.getAttribute("data-stage"); var inp=document.getElementById("recIn_"+idv+"_"+sk); if(inp)addStageRecord(idv,sk,inp.value); }
+    else if(act==="proj-add-stage"){ var pa=findProject(idv); var def="阶段"+((pa?pa.stages.length:0)+1); var nm=(typeof prompt==="function")?prompt("新阶段名称（如：需求沟通、方案评审）：",def):def; if(nm!==null&&nm!==undefined)addStageInline(idv,nm); }
     else if(act==="stage-del-rec"){ delStageRecord(idv, el.getAttribute("data-stage"), parseInt(el.getAttribute("data-ridx"),10)); }
   }
 
