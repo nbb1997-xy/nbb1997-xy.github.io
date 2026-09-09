@@ -339,6 +339,88 @@
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .count-badge{font-size:11px;background:var(--purple-soft);color:var(--purple);border-radius:999px;padding:1px 8px;font-weight:700;margin-left:4px;}
 
+  /* ---------- 项目跟进（树形：项目→阶段→跟进记录） ---------- */
+  .proj-card{background:#fff;border:1px solid var(--line);border-radius:16px;margin-bottom:12px;overflow:hidden;}
+  .proj-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;cursor:pointer;transition:background .15s;}
+  .proj-top:hover{background:var(--bg-2);}
+  .proj-title{font-size:15px;font-weight:700;color:var(--text);display:flex;flex-direction:column;gap:3px;}
+  .proj-meta{font-size:12px;font-weight:500;color:var(--muted);}
+  .proj-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+  .win-badge{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;cursor:pointer;border:none;white-space:nowrap;}
+  .win-推进中{background:#EAF0FF;color:#3B6BE5;}
+  .win-赢单{background:#DCF5E6;color:#1C9C52;}
+  .win-输单{background:#FBE3E3;color:#D6453F;}
+  .proj-summary{font-size:12.5px;color:var(--muted);padding:0 16px 12px;}
+  .proj-tree{padding:6px 16px 14px;border-top:1px dashed var(--line);}
+  .stage-block{padding:10px 0;border-bottom:1px solid var(--line);}
+  .stage-block:last-child{border-bottom:none;}
+  .stage-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .stage-name{font-size:14px;font-weight:600;color:var(--text);}
+  .stage-status{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;cursor:pointer;border:none;white-space:nowrap;}
+  .ss-未开始{background:var(--bg-2);color:var(--muted);}
+  .ss-进行中{background:#FFF3D6;color:#C98A00;}
+  .ss-已完成{background:#DCF5E6;color:#1C9C52;}
+  .rec-list{margin:8px 0 0;}
+  .rec-item{display:flex;gap:8px;font-size:12.5px;color:var(--text);padding:6px 0;border-top:1px dashed var(--line);align-items:flex-start;}
+  .rec-at{color:var(--muted);white-space:nowrap;font-size:11.5px;margin-top:1px;}
+  .rec-note{flex:1;white-space:pre-wrap;word-break:break-word;}
+  .rec-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0 2px;}
+  .rec-del:hover{color:#D6453F;}
+  .rec-add{display:flex;gap:8px;margin-top:8px;}
+  .rec-inp{flex:1;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;font-family:inherit;outline:none;background:#fff;color:var(--text);}
+  .rec-inp:focus{border-color:var(--purple);}
+  .mini-btn{background:linear-gradient(135deg,var(--purple),var(--purple-2));color:#fff;border:none;border-radius:10px;padding:0 14px;font-size:13px;font-weight:600;cursor:pointer;min-height:38px;white-space:nowrap;}
+  .mini-btn.ghost{background:var(--bg-2);color:var(--text);border:1px solid var(--line);}
+  .proj-note{font-size:12.5px;color:var(--muted);margin-top:6px;white-space:pre-wrap;}
+  .stage-checks{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+  .stage-checks label{display:flex;align-items:center;gap:5px;font-size:13px;background:var(--bg-2);padding:7px 11px;border-radius:10px;cursor:pointer;border:1px solid var(--line);}
+  .stage-checks input{width:15px;height:15px;accent-color:var(--purple);}
+  .proj-empty{font-size:13px;color:var(--muted);text-align:center;padding:24px 0;}
+
+  /* ---------- 项目跟进 ---------- */
+  .proj-card{border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:12px;background:var(--bg-2);}
+  .proj-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;cursor:pointer;}
+  .proj-name{font-size:15px;font-weight:700;color:var(--text);line-height:1.3;}
+  .proj-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;font-size:12px;color:var(--muted);}
+  .proj-meta .proj-tag{background:var(--purple-soft);color:var(--purple);border-radius:8px;padding:1px 8px;}
+  .proj-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+  .win-badge{font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;white-space:nowrap;}
+  .win-badge.wb-prog{background:#EAF1FF;color:#3B6FE0;}
+  .win-badge.wb-win{background:#DCF5E6;color:#1E9B56;}
+  .win-badge.wb-lose{background:#FDE3E7;color:#D8455C;}
+  .chev{background:none;border:none;font-size:15px;color:var(--muted);transition:transform .2s;cursor:pointer;}
+  .chev.up{transform:rotate(180deg);}
+  .proj-pipeline{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:11px 0 8px;}
+  .pl-node{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 11px;font-size:12px;color:var(--text);cursor:pointer;}
+  .pl-dot{width:7px;height:7px;border-radius:50%;background:#C7CBD6;}
+  .pl-st{font-size:10px;color:var(--muted);}
+  .pl-arrow{color:var(--muted);font-size:13px;}
+  .pl-node.st-todo .pl-dot{background:#C7CBD6;}
+  .pl-node.st-doing{border-color:var(--purple);background:var(--purple-soft);}
+  .pl-node.st-doing .pl-dot{background:var(--purple);}
+  .pl-node.st-done{border-color:#1E9B56;background:#DCF5E6;}
+  .pl-node.st-done .pl-dot{background:#1E9B56;}
+  .proj-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:4px;}
+  .win-seg{display:flex;gap:6px;}
+  .proj-tools{display:flex;gap:6px;}
+  .proj-detail{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px;}
+  .stage-block{margin-bottom:12px;}
+  .stage-h{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;}
+  .stage-st{font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px;}
+  .stage-st.st-todo{background:#EEF0F4;color:#8A90A0;}
+  .stage-st.st-doing{background:var(--purple-soft);color:var(--purple);}
+  .stage-st.st-done{background:#DCF5E6;color:#1E9B56;}
+  .rec-list{list-style:none;margin:7px 0 6px;padding:0;display:flex;flex-direction:column;gap:5px;}
+  .rec-item{display:flex;align-items:flex-start;gap:8px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:6px 9px;font-size:12px;}
+  .rec-at{color:var(--muted);flex-shrink:0;font-variant-numeric:tabular-nums;}
+  .rec-note{flex:1;color:var(--text);line-height:1.4;}
+  .rec-del{border:none;background:none;color:#C25;font-size:15px;cursor:pointer;line-height:1;padding:0 2px;}
+  .rec-empty{color:var(--muted);font-size:12px;padding:4px 0;}
+  .rec-add{display:flex;gap:6px;}
+  .rec-in{flex:1;min-height:38px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px;background:#fff;color:var(--text);}
+  .stage-chip{background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:7px 11px;font-size:13px;color:var(--text);cursor:pointer;}
+  .stage-chip.on{background:var(--purple);color:#fff;border-color:var(--purple);}
+
   /* ---------- 临期提醒 ---------- */
   .rem-card{transition:box-shadow .2s;}
   .rem-card.rem-over{border:1.5px solid #FFD0D8;box-shadow:0 8px 30px rgba(255,92,124,.14);}
@@ -444,6 +526,10 @@
   <button class="tab" data-view="done" data-page-node-id="OpOsk6lVGwTdIyCyZl59DO">
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" data-page-node-id="gU6Dkt8MhM4mTdrwogV7KE"><path d="M20 7 9 18l-5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="FSmo6mZDFoYc6uuDgUskcx"/></svg>
     已完成
+  </button>
+  <button class="tab" data-view="project" data-page-node-id="PrjTopTab001">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" data-page-node-id="PrjTopTab002"><path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-page-node-id="PrjTopTab003"/><circle cx="7" cy="7" r="1.6" fill="currentColor" data-page-node-id="PrjTopTab004"/></svg>
+    项目
   </button>
 </nav>
 
@@ -562,6 +648,26 @@
     </div>
   </section>
 
+  <!-- ===== 项目跟进 ===== -->
+  <section class="view" id="view-project" data-page-node-id="PrjView001">
+    <div class="card" data-page-node-id="PrjView002">
+      <div class="sec-head" data-page-node-id="PrjView003">
+        <div class="ic ic-pool" style="background:linear-gradient(135deg,#7C5CFC,#A78BFA);" data-page-node-id="PrjView004">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" data-page-node-id="PrjView005"><path d="M3 7h18M3 12h18M3 17h18" stroke="#fff" stroke-width="1.8" stroke-linecap="round" data-page-node-id="PrjView006"/><circle cx="7" cy="7" r="1.6" fill="#fff" data-page-node-id="PrjView007"/></svg>
+        </div>
+        <div data-page-node-id="PrjView008">
+          <h2 data-page-node-id="PrjView009">项目跟进 <span class="count-badge" id="projCount" data-page-node-id="PrjView010">0</span></h2>
+          <div class="hint" data-page-node-id="PrjView011">树形：项目 → 阶段（状态+跟进记录）· 赢单状态可手动更新</div>
+        </div>
+      </div>
+      <button class="add-btn block-add" id="openProjectDrawer" style="background:linear-gradient(135deg,#7C5CFC,#A78BFA);" data-page-node-id="PrjView012">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" data-page-node-id="PrjView013"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.4" stroke-linecap="round" data-page-node-id="PrjView014"/></svg>
+        新增项目
+      </button>
+      <div class="list" id="projectList" data-page-node-id="PrjView015"></div>
+    </div>
+  </section>
+
 </div>
 
 <!-- bottom nav mobile -->
@@ -577,6 +683,10 @@
   <button class="tab" data-view="done" data-page-node-id="jwcN5x9H0Y0FCEDcRsQYVq">
     <span class="nb-ic" data-page-node-id="0Y1vX341gLTsdsGFARcEDv"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" data-page-node-id="Uc0u7ml5KM0RCOH5ILJD77"><path d="M20 7 9 18l-5-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="SY4VCYfTXd6J0oWsj1KkbE"/></svg></span>
     已完成
+  </button>
+  <button class="tab" data-view="project" data-page-node-id="PrjBotTab001">
+    <span class="nb-ic" data-page-node-id="PrjBotTab002"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" data-page-node-id="PrjBotTab003"><path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-page-node-id="PrjBotTab004"/><circle cx="7" cy="7" r="1.6" fill="currentColor" data-page-node-id="PrjBotTab005"/></svg></span>
+    项目
   </button>
 </nav>
 
@@ -689,7 +799,38 @@
           <button class="mini-btn" id="subAdd" style="min-height:42px;" data-page-node-id="O7VTU82HfKSr8KMaWADHCo">＋ 添加</button>
         </div>
       </div>
-    </div>
+      <div id="projectForm" class="hide" data-page-node-id="PrjForm001">
+        <div class="field full" data-page-node-id="PrjForm002">
+          <label data-page-node-id="PrjForm003">项目名称</label>
+          <input type="text" id="projName" placeholder="例如：景杰生物二期投标" maxlength="60" data-page-node-id="PrjForm004">
+        </div>
+        <div class="form-grid" data-page-node-id="PrjForm005">
+          <div class="field" data-page-node-id="PrjForm006">
+            <label data-page-node-id="PrjForm007">客户 / 归属</label>
+            <input type="text" id="projClient" placeholder="如：杭州景杰生物" maxlength="40" data-page-node-id="PrjForm008">
+          </div>
+          <div class="field" data-page-node-id="PrjForm009">
+            <label data-page-node-id="PrjForm010">类型 / 标签</label>
+            <input type="text" id="projType" placeholder="如：B2B投标" maxlength="30" data-page-node-id="PrjForm011">
+          </div>
+        </div>
+        <div class="field full" data-page-node-id="PrjForm012">
+          <label data-page-node-id="PrjForm013">赢单状态</label>
+          <div class="seg" id="projWinSeg" data-page-node-id="PrjForm014">
+            <button type="button" data-win="推进中" class="on" data-page-node-id="PrjForm015">推进中</button>
+            <button type="button" data-win="赢单" data-page-node-id="PrjForm016">赢单</button>
+            <button type="button" data-win="输单" data-page-node-id="PrjForm017">输单</button>
+          </div>
+        </div>
+        <div class="field full" data-page-node-id="PrjForm018">
+          <label data-page-node-id="PrjForm019">参与阶段（按需勾选，不必全部经历）</label>
+          <div class="stage-checks" id="projStageChecks" data-page-node-id="PrjForm020"></div>
+        </div>
+        <div class="field full" style="margin-top:12px;" data-page-node-id="PrjForm021">
+          <label data-page-node-id="PrjForm022">备注（可选）</label>
+          <textarea id="projNote" placeholder="关键背景、资源、风险…" maxlength="300" style="min-height:60px;" data-page-node-id="PrjForm023"></textarea>
+        </div>
+      </div>
     <div class="drawer-foot" data-page-node-id="GkeKTNnwgwgHdJPX1i1UpF">
       <button class="btn-cancel" id="drawerCancel" data-page-node-id="8kPmIPl9rvLHO32YygvAOG">取消</button>
       <button class="btn-ok" id="drawerConfirm" data-page-node-id="9TAq9usSO3H8Bj4eHNsCRU">添加</button>
@@ -702,7 +843,7 @@
 (function(){
   "use strict";
   var KEY="wb_workspace_v1";
-  var state={mustDo:[],pool:[],completed:[],shortDo:[],shortInit:false};
+  var state={mustDo:[],pool:[],completed:[],shortDo:[],shortInit:false,projects:[]};
   var form={type:"long",tags:[],stars:3,duration:60};
 
   /* ---------- cloud sync (Supabase, pluggable) ----------
@@ -716,6 +857,22 @@
   var CLOUD={URL:"", KEY:""};
   var ACCT_KEY="wb_ws_acct", PIN_KEY="wb_ws_pin", TS_KEY="wb_ws_ts";
   var REMIND_CFG_KEY="wb_ws_remind_cfg", REMIND_LOG_KEY="wb_ws_remind_log";
+
+  /* ---------- 项目跟进（树形层级：项目=父，阶段=子） ----------
+     8 个标准阶段，各项目可按需灵活挑选，不必全部经历。
+     阶段子节点携带 status（未开始/进行中/已完成）与 records（跟进记录）。 */
+  var PROJ_STAGES=[
+    {key:"register", name:"商机登记"},
+    {key:"research", name:"需求调研"},
+    {key:"design",   name:"方案设计"},
+    {key:"poc",      name:"POC验证"},
+    {key:"quote",    name:"报价配置"},
+    {key:"bid",      name:"投标应标"},
+    {key:"eval",     name:"讲标评标"},
+    {key:"contract", name:"合同签约"}
+  ];
+  var PROJ_WIN=["推进中","赢单","输单"]; // 赢单状态，默认推进中
+  var STAGE_STATUS=["未开始","进行中","已完成"];
   function acct(){return localStorage.getItem(ACCT_KEY)||"";}
   function pin(){return localStorage.getItem(PIN_KEY)||"";}
   function localTs(){var t=parseInt(localStorage.getItem(TS_KEY)||"0",10);return isNaN(t)?0:t;}
@@ -761,6 +918,31 @@
       };
     }).sort(function(a,b){return a.order-b.order;}).map(function(s,i){s.order=i;return s;});
   }
+  function normProject(p){ // 项目规范化：补齐字段、保留已有阶段状态与记录
+    if(!p)return null;
+    var o=Object.assign({},p);
+    o.id=o.id||uid();
+    o.name=o.name||"未命名项目";
+    o.client=o.client||"";
+    o.type=o.type||"";
+    o.note=o.note||"";
+    o.winStatus=PROJ_WIN.indexOf(o.winStatus)>=0?o.winStatus:"推进中";
+    if(!Array.isArray(o.stages))o.stages=[];
+    // 仅保留 PROJ_STAGES 中已知的阶段 key（防止旧数据误用），并按标准顺序稳定排序
+    var known={};PROJ_STAGES.forEach(function(s){known[s.key]=true;});
+    o.stages=o.stages.filter(function(s){return s&&known[s.key];}).map(function(s){
+      return {
+        key:s.key,
+        status:STAGE_STATUS.indexOf(s.status)>=0?s.status:"未开始",
+        records:Array.isArray(s.records)?s.records.filter(function(r){return r&&r.note;}).map(function(r){
+          return {at:r.at||"", note:r.note||"", status:STAGE_STATUS.indexOf(r.status)>=0?r.status:"未开始"};
+        }):[]
+      };
+    });
+    o.createdAt=o.createdAt||todayStr();
+    return o;
+  }
+  function normProjects(arr){return (arr||[]).map(normProject).filter(Boolean);}
   function load(){
     try{
       var raw=localStorage.getItem(KEY);
@@ -770,6 +952,8 @@
       if(Array.isArray(state.shortDo))state.shortDo=normShort(state.shortDo);
       else state.shortDo=[];
       if(Array.isArray(state.completed))state.completed=normDone(state.completed);
+      if(Array.isArray(state.projects))state.projects=normProjects(state.projects);
+      else state.projects=[];
       if(state.shortInit===undefined)state.shortInit=false;
     }catch(e){seed();}
   }
@@ -1402,7 +1586,174 @@
   function emptyHTML(t){
     return '<div class="empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none"><path d="M5 8h14M5 8a2 2 0 0 1-2-2 2 2 0 0 1 2-2h14a2 2 0 0 1 2 2 2 2 0 0 1-2 2M5 8v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8" stroke="#B9B2D6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><div>'+t+'</div></div>';
   }
-  function renderAll(){renderMust();renderWorth();renderPool();renderDone();renderShort();renderReminders();updateTitleBadge();}
+  function renderAll(){renderMust();renderWorth();renderPool();renderDone();renderShort();renderProjects();renderReminders();updateTitleBadge();}
+
+  /* ---------- 项目跟进（树形：项目 → 阶段 → 状态/跟进记录） ---------- */
+  var projExpanded={};          // 内存态：哪些项目处于展开（不持久化）
+  var projWinSel="推进中";       // 抽屉表单当前选中的赢单状态
+  function findProject(id){return state.projects.find(function(p){return p.id===id;});}
+  function stageName(key){var s=PROJ_STAGES.find(function(x){return x.key===key;});return s?s.name:key;}
+  function stageStatusClass(st){return st==="已完成"?"st-done":(st==="进行中"?"st-doing":"st-todo");}
+
+  function renderStageChecks(selectedKeys){
+    var sel=selectedKeys||[];
+    return PROJ_STAGES.map(function(s){
+      var on=sel.indexOf(s.key)>=0?"on":"";
+      return '<button type="button" class="stage-chip '+on+'" data-skey="'+s.key+'">'+s.name+'</button>';
+    }).join("");
+  }
+  function buildProjectFromForm(){
+    var name=(document.getElementById("projName").value||"").trim();
+    if(!name)return null;
+    var client=(document.getElementById("projClient").value||"").trim();
+    var type=(document.getElementById("projType").value||"").trim();
+    var note=(document.getElementById("projNote").value||"").trim();
+    var sel=[];
+    document.querySelectorAll("#projStageChecks .stage-chip.on").forEach(function(b){sel.push(b.getAttribute("data-skey"));});
+    var stages=sel.map(function(k){return {key:k,status:"未开始",records:[]};});
+    return {name:name,client:client,type:type,winStatus:projWinSel,note:note,stages:stages};
+  }
+  function openProjectDrawer(p){
+    drawerMode="project";
+    editId=p?p.id:null;
+    var isEdit=!!p;
+    document.getElementById("drawerTitle").textContent=isEdit?"编辑项目":"新增项目";
+    document.getElementById("drawerConfirm").textContent=isEdit?"保存":"添加";
+    document.getElementById("mustForm").classList.add("hide");
+    document.getElementById("poolForm").classList.add("hide");
+    document.getElementById("shortForm").classList.add("hide");
+    document.getElementById("subManager").classList.add("hide");
+    document.getElementById("projectForm").classList.remove("hide");
+    if(isEdit){
+      document.getElementById("projName").value=p.name||"";
+      document.getElementById("projClient").value=p.client||"";
+      document.getElementById("projType").value=p.type||"";
+      document.getElementById("projNote").value=p.note||"";
+      projWinSel=PROJ_WIN.indexOf(p.winStatus)>=0?p.winStatus:"推进中";
+      document.getElementById("projWinSeg").querySelectorAll("button").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-win")===projWinSel);});
+      document.getElementById("projStageChecks").innerHTML=renderStageChecks(p.stages.map(function(s){return s.key;}));
+    } else {
+      document.getElementById("projName").value="";
+      document.getElementById("projClient").value="";
+      document.getElementById("projType").value="";
+      document.getElementById("projNote").value="";
+      projWinSel="推进中";
+      document.getElementById("projWinSeg").querySelectorAll("button").forEach(function(b){b.classList.toggle("on",b.getAttribute("data-win")==="推进中");});
+      document.getElementById("projStageChecks").innerHTML=renderStageChecks();
+    }
+    document.getElementById("drawerMask").classList.add("show");
+    setTimeout(function(){var f=document.getElementById("projName");if(f)f.focus();},80);
+  }
+  function addProject(){
+    var d=buildProjectFromForm();if(!d){toast("请填写项目名称");return;}
+    d.id=uid();d.createdAt=todayStr();
+    state.projects.push(d);save();renderProjects();closeDrawer();toast("已新增项目");
+  }
+  function updateProject(){
+    var p=findProject(editId);if(!p){closeDrawer();return;}
+    var d=buildProjectFromForm();if(!d){toast("请填写项目名称");return;}
+    // 灵活更新阶段集：保留已有阶段的状态与记录，新增补默认、移除删除
+    var oldMap={};p.stages.forEach(function(s){oldMap[s.key]=s;});
+    p.stages=d.stages.map(function(s){
+      var old=oldMap[s.key];
+      return old?{key:s.key,status:old.status,records:old.records}:{key:s.key,status:"未开始",records:[]};
+    });
+    p.name=d.name;p.client=d.client;p.type=d.type;p.note=d.note;p.winStatus=d.winStatus;
+    save();renderProjects();closeDrawer();toast("已保存");
+  }
+  function setWinStatus(id,st){
+    var p=findProject(id);if(!p)return;
+    if(PROJ_WIN.indexOf(st)<0)return;
+    p.winStatus=st;save();renderProjects();updateTitleBadge();
+  }
+  function cycleStageStatus(id,key){
+    var p=findProject(id);if(!p)return;
+    var s=p.stages.find(function(x){return x.key===key;});if(!s)return;
+    var i=STAGE_STATUS.indexOf(s.status);
+    s.status=STAGE_STATUS[(i+1)%STAGE_STATUS.length];
+    save();renderProjects();
+  }
+  function addStageRecord(id,key,note){
+    var p=findProject(id);if(!p)return;
+    var s=p.stages.find(function(x){return x.key===key;});if(!s)return;
+    note=(note||"").trim();if(!note)return;
+    s.records.push({at:nowStamp(),note:note,status:s.status});
+    save();renderProjects();
+  }
+  function delStageRecord(id,key,idx){
+    var p=findProject(id);if(!p)return;
+    var s=p.stages.find(function(x){return x.key===key;});if(!s)return;
+    s.records.splice(idx,1);save();renderProjects();
+  }
+  function deleteProject(id){
+    state.projects=state.projects.filter(function(p){return p.id!==id;});
+    delete projExpanded[id];save();renderProjects();updateTitleBadge();toast("已删除项目");
+  }
+  function nowStamp(){
+    var d=new Date(),p=function(n){return (n<10?"0":"")+n;};
+    return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes());
+  }
+  function winBadgeClass(st){return st==="赢单"?"wb-win":(st==="输单"?"wb-lose":"wb-prog");}
+  function renderProjects(){
+    var list=document.getElementById("projectList");if(!list)return;
+    document.getElementById("projCount").textContent=state.projects.length;
+    if(state.projects.length===0){
+      list.innerHTML='<div class="empty">还没有项目。点上方「＋ 新增项目」，按投标/客户维度建一个，勾选要跟的阶段即可。</div>';
+      return;
+    }
+    list.innerHTML=state.projects.map(function(p){
+      var ex=projExpanded[p.id]?"ex":"";
+      var win=winBadgeClass(p.winStatus);
+      var pipeline=p.stages.map(function(s){
+        return '<button class="pl-node '+stageStatusClass(s.status)+'" data-act="stage-cycle" data-id="'+p.id+'" data-stage="'+s.key+'" title="点击切换状态">'+
+          '<span class="pl-dot"></span>'+stageName(s.key)+
+          '<span class="pl-st">'+s.status+'</span></button>';
+      }).join('<span class="pl-arrow">›</span>');
+      var detail="";
+      if(ex){
+        detail='<div class="proj-detail">';
+        if(p.stages.length===0){
+          detail+='<div class="empty small">该项目未勾选阶段。点「编辑」勾选要跟的阶段。</div>';
+        }
+        p.stages.forEach(function(s){
+          var recs=s.records.map(function(r,i){
+            return '<li class="rec-item"><span class="rec-at">'+r.at+'</span><span class="rec-note">'+esc(r.note)+'</span>'+
+              '<button class="rec-del" data-act="stage-del-rec" data-id="'+p.id+'" data-stage="'+s.key+'" data-ridx="'+i+'">×</button></li>';
+          }).join("");
+          detail+='<div class="stage-block">'+
+            '<div class="stage-h"><span class="'+stageStatusClass(s.status)+'">'+stageName(s.key)+'</span>'+
+            '<span class="stage-st '+stageStatusClass(s.status)+'">'+s.status+'</span></div>'+
+            '<ul class="rec-list">'+(recs||'<li class="rec-empty">暂无跟进记录</li>')+'</ul>'+
+            '<div class="rec-add"><input type="text" class="rec-in" id="recIn_'+p.id+'_'+s.key+'" placeholder="记一笔跟进（做了什么/结论/风险）…" maxlength="120">'+
+            '<button class="mini-btn" data-act="stage-add-rec" data-id="'+p.id+'" data-stage="'+s.key+'">记录</button></div>'+
+          '</div>';
+        });
+        detail+='</div>';
+      }
+      return '<div class="proj-card">'+
+        '<div class="proj-top" data-act="proj-toggle" data-id="'+p.id+'">'+
+          '<div class="proj-main">'+
+            '<div class="proj-name">'+esc(p.name)+'</div>'+
+            '<div class="proj-meta">'+(p.client?'<span>'+esc(p.client)+'</span>':'')+(p.type?'<span class="proj-tag">'+esc(p.type)+'</span>':'')+'</div>'+
+          '</div>'+
+          '<div class="proj-right">'+
+            '<span class="win-badge '+win+'">'+p.winStatus+'</span>'+
+            '<button class="chev '+(ex?"up":"")+'">▾</button>'+
+          '</div>'+
+        '</div>'+
+        '<div class="proj-pipeline">'+pipeline+'</div>'+
+        '<div class="proj-actions">'+
+          '<div class="win-seg">'+PROJ_WIN.map(function(w){
+            return '<button class="mini-btn '+(p.winStatus===w?"on":"")+'" data-act="proj-win" data-id="'+p.id+'" data-win="'+w+'">'+w+'</button>';
+          }).join("")+'</div>'+
+          '<div class="proj-tools"><button class="mini-btn" data-act="proj-edit" data-id="'+p.id+'">编辑</button>'+
+          '<button class="mini-btn danger" data-act="proj-del" data-id="'+p.id+'">删除</button></div>'+
+        '</div>'+
+        detail+
+      '</div>';
+    }).join("");
+  }
+  function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
   function renderShort(){
     var box=document.getElementById("shortList");
     if(!box)return;
@@ -1735,6 +2086,11 @@
   function closeDrawer(){
     editId=null;
     document.getElementById("drawerMask").classList.remove("show");
+    var pf=document.getElementById("projectForm");if(pf)pf.classList.add("hide");
+    var pName=document.getElementById("projName");if(pName)pName.value="";
+    var pCli=document.getElementById("projClient");if(pCli)pCli.value="";
+    var pType=document.getElementById("projType");if(pType)pType.value="";
+    var pNote=document.getElementById("projNote");if(pNote)pNote.value="";
     var mt=document.getElementById("drawerMustText");if(mt)mt.value="";
     var mdesc=document.getElementById("drawerMustDesc");if(mdesc)mdesc.value="";
     var mdue=document.getElementById("drawerMustDue");if(mdue)mdue.value="";
@@ -1839,6 +2195,21 @@
     document.getElementById("openMustDrawer").addEventListener("click",function(){openDrawer("must");});
     document.getElementById("openShortDrawer").addEventListener("click",function(){openDrawer("short");});
     document.getElementById("openPoolDrawer").addEventListener("click",function(){openDrawer("pool");});
+    var opd=document.getElementById("openProjectDrawer");
+    if(opd)opd.addEventListener("click",function(){openProjectDrawer(null);});
+    // 赢单状态段
+    var pws=document.getElementById("projWinSeg");
+    if(pws)pws.addEventListener("click",function(e){
+      var b=e.target.closest("button[data-win]");if(!b)return;
+      projWinSel=b.getAttribute("data-win");
+      pws.querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b);});
+    });
+    // 阶段勾选 chips
+    var psc=document.getElementById("projStageChecks");
+    if(psc)psc.addEventListener("click",function(e){
+      var b=e.target.closest(".stage-chip");if(!b)return;
+      b.classList.toggle("on");
+    });
 
     document.getElementById("typeSeg").querySelectorAll("button").forEach(function(b){
       b.addEventListener("click",function(){
@@ -1914,6 +2285,7 @@
     document.getElementById("drawerConfirm").addEventListener("click",function(){
       if(drawerMode==="must"){ if(editId)updateMust(); else addMust(); }
       else if(drawerMode==="short"){ if(editId)updateShort(); else addShort(); }
+      else if(drawerMode==="project"){ if(editId)updateProject(); else addProject(); }
       else { if(editId)updatePool(); else addPool(); }
     });
     document.getElementById("drawerCancel").addEventListener("click",closeDrawer);
@@ -1927,6 +2299,8 @@
       var el=document.getElementById(id);
       if(el)el.addEventListener("click",onListClick);
     });
+    var projEl=document.getElementById("projectList");
+    if(projEl)projEl.addEventListener("click",onListClick);
     // 短期列表：截止日期变更（改期 / 到期立即迁移）
     var shortEl=document.getElementById("shortList");
     if(shortEl){
@@ -1986,6 +2360,14 @@
     else if(act==="cycle-sub")cycleSub(idv,subv);
     else if(act==="sub-up")moveSub(idv,subv,-1);
     else if(act==="sub-down")moveSub(idv,subv,1);
+    /* ---- 项目跟进 ---- */
+    else if(act==="proj-toggle"){ if(projExpanded[idv])delete projExpanded[idv]; else projExpanded[idv]=true; renderProjects(); }
+    else if(act==="proj-edit"){ var pe=findProject(idv); if(pe)openProjectDrawer(pe); }
+    else if(act==="proj-win"){ setWinStatus(idv, el.getAttribute("data-win")); }
+    else if(act==="stage-cycle"){ cycleStageStatus(idv, el.getAttribute("data-stage")); }
+    else if(act==="proj-del"){ confirmModal("删除项目","确定删除该项目及其全部阶段、跟进记录？此操作不可恢复。",function(){ deleteProject(idv); }); }
+    else if(act==="stage-add-rec"){ var sk=el.getAttribute("data-stage"); var inp=document.getElementById("recIn_"+idv+"_"+sk); if(inp)addStageRecord(idv,sk,inp.value); }
+    else if(act==="stage-del-rec"){ delStageRecord(idv, el.getAttribute("data-stage"), parseInt(el.getAttribute("data-ridx"),10)); }
   }
 
   /* handlers are wired via event delegation (see onListClick), no window exposure needed */
